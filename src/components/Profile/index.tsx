@@ -6,7 +6,10 @@ export const Profile = () => {
             <img src="https://github.com/LucasBandeira-MJ.png" alt="Lucas Bandeira" />
             <div>
                 <strong>Lucas Bandeira</strong>
-                <p>Level 1</p>
+                <p>
+                    <img src="icons/level.svg" alt="level" />
+                    Level 1
+                </p>
             </div>
         </div>
     )

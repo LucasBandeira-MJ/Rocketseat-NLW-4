@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import styles from './styles.module.sass'
 
-const INITIAL_TIME = 10 //25 minutes
+const INITIAL_TIME = 6 //25 minutes
+let countdownTimeout: NodeJS.Timeout
 
 export const Countdown = () => {
     const [time, setTime] = useState(INITIAL_TIME)
-    const [active, setActive] = useState(false)
+    const [isActive, setIsActive] = useState(false)
+    const [hasFinished, setHasFinished] = useState(false)
 
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
@@ -14,16 +16,24 @@ export const Countdown = () => {
     const [secondsLeft, secondsRight] = String(seconds).padStart(2, '0').split('')
 
     useEffect(() => {
-        if(!active || time <= 0 ) { return ; }
-            
-        setTimeout(() => {
-            setTime(time => time - 1)
-        }, 1000)
+        if(isActive && time > 0 ) {
+            countdownTimeout = setTimeout(() => {
+                setTime(time => time - 1)
+            }, 1000)
+        } else if(isActive && time === 0) {
+            setHasFinished(true)
+            setIsActive(false)
+        }
 
-    }, [active, time])
+    }, [isActive, time])
 
-    const startCountdown = () => {
-        setActive(true)
+    const handleCountdown = () => {
+        if(isActive) {
+            setTime(INITIAL_TIME)
+        }
+        
+        setIsActive(active => !active)
+        clearTimeout(countdownTimeout)
     }
 
     return (
@@ -41,11 +51,12 @@ export const Countdown = () => {
             </div>
 
             <button 
-                onClick={startCountdown} 
+                onClick={handleCountdown} 
                 type="button" 
-                className={styles.startButton}
+                className={`${styles.startButton} ${isActive && styles.startButtonActive } ${hasFinished && styles.startButtonFinished}`}
+                disabled={hasFinished}
             >
-                Iniciar um ciclo
+                { hasFinished? 'Ciclo encerrado' : isActive ? 'Abandonar Ciclo' : 'Iniciar novo ciclo' }
             </button>
         </>
 

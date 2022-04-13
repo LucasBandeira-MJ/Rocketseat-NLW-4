@@ -3,7 +3,11 @@ import { ChallengesContext } from '../../context/ChallengesContext'
 import styles from './styles.module.sass'
 
 export const ChallengeBox = () => {
-    const { activeChallenge, resetChallenge } = useContext(ChallengesContext)
+    const { 
+        activeChallenge, 
+        resetChallenge, 
+        completeChallenge 
+    } = useContext(ChallengesContext)
 
     return (
         <div className={styles.container}>
@@ -29,6 +33,7 @@ export const ChallengeBox = () => {
                             <button 
                                 type="button"
                                 className={styles.challengeSucceededButton}
+                                onClick={completeChallenge}
                             >
                                 Completei
                             </button>

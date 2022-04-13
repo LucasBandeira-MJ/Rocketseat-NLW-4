@@ -4,12 +4,13 @@ import challenges from '../../challenges.json'
 interface ChallengesContextData {
     level: number
     currentExp: number
-    levelUp: () => void
     challengesCompleted: number
-    startNewChallenge: () => void
     activeChallenge: null | ActiveChallengeState
-    resetChallenge: () => void
     experienceToNextLevel: number
+    levelUp: () => void
+    startNewChallenge: () => void
+    resetChallenge: () => void
+    completeChallenge: () => void
 }
 
 interface ChallengesProviderProps {
@@ -48,6 +49,22 @@ export const ChallengesProvider = ({children}: ChallengesProviderProps) => {
         setActiveChallenge(null)
     }
 
+    const completeChallenge = () => {
+        if(!activeChallenge) { return }
+
+        const { amount } = activeChallenge
+        let finalExperience = currentExp + amount
+
+        if(finalExperience >= experienceToNextLevel) {
+            finalExperience = finalExperience - experienceToNextLevel
+            levelUp()
+        }
+
+        setCurrentExp(finalExperience)
+        setActiveChallenge(null)
+        setChallengesCompleted(completed => completed + 1)
+    }
+
 
 
     return (
@@ -60,7 +77,8 @@ export const ChallengesProvider = ({children}: ChallengesProviderProps) => {
                 startNewChallenge,
                 activeChallenge,
                 resetChallenge,
-                experienceToNextLevel
+                experienceToNextLevel,
+                completeChallenge
             }
         }>
             {children}

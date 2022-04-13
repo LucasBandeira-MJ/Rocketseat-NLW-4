@@ -6,6 +6,7 @@ import { Countdown } from '../components/Countdown'
 
 import { ExperienceBar } from '../components/ExperienceBar'
 import { Profile } from '../components/Profile'
+import { CountdownProvider } from '../context/CountdownContext'
 
 import styles from '../styles/Home.module.sass'
 
@@ -16,17 +17,19 @@ const Home: NextPage = () => {
         <title>Home | move.it</title>
       </Head>
     <ExperienceBar />
-    <main>
-      <div>
-        <Profile />
-        <CompletedChallenges />
-        <Countdown />
-      </div>
+    <CountdownProvider>
+      <main>
+        <div>
+          <Profile />
+          <CompletedChallenges />
+          <Countdown />
+        </div>
 
-      <div>
-        <ChallengeBox />
-      </div>
-    </main>
+        <div>
+          <ChallengeBox />
+        </div>
+      </main>
+    </CountdownProvider>
   </div>
   )
 }

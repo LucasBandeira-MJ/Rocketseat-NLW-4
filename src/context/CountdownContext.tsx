@@ -10,7 +10,8 @@ interface CountdownContextData {
     seconds: number
     hasFinished: boolean
     isActive: boolean
-    handleCountdown: () => void
+    startCountdown: () => void
+    resetCountdown: () => void
 }
 
 interface CountdownProviderProps {
@@ -42,13 +43,15 @@ export const CountdownProvider = ({children}: CountdownProviderProps) => {
 
     }, [isActive, time])
 
-    const handleCountdown = () => {
-        if(isActive) {
-            setTime(INITIAL_TIME)
-        }
-        
-        setIsActive(active => !active)
-        clearTimeout(countdownTimeout)
+    const startCountdown = () => {
+        setIsActive(true)
+    }
+
+    const resetCountdown = () => {
+        clearInterval(countdownTimeout)
+        setIsActive(false)
+        setHasFinished(false)
+        setTime(INITIAL_TIME)
     }
 
 
@@ -60,7 +63,8 @@ export const CountdownProvider = ({children}: CountdownProviderProps) => {
                 seconds,
                 hasFinished,
                 isActive,
-                handleCountdown
+                startCountdown,
+                resetCountdown
             }
         }>
             {children}

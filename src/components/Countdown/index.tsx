@@ -1,14 +1,24 @@
 import { useContext, useEffect, useState } from 'react'
-import { ChallengesContext } from '../../context/ChallengesContext'
 import { CountdownContext } from '../../context/CountdownContext'
 import styles from './styles.module.sass'
 
 
 export const Countdown = () => {
-    const {minutes, seconds, handleCountdown, isActive, hasFinished} = useContext(CountdownContext)
+    const {
+        minutes, 
+        seconds, 
+        startCountdown, 
+        resetCountdown,
+        isActive, 
+        hasFinished
+    } = useContext(CountdownContext)
 
     const [minutesLeft, minutesRight] = String(minutes).padStart(2, '0').split('')
     const [secondsLeft, secondsRight] = String(seconds).padStart(2, '0').split('')
+
+    const handleClick = () => {
+        isActive ? resetCountdown() : startCountdown() 
+    }
 
 
     return (
@@ -26,7 +36,7 @@ export const Countdown = () => {
             </div>
 
             <button 
-                onClick={handleCountdown} 
+                onClick={handleClick} 
                 type="button" 
                 className={`${styles.startButton} ${isActive && styles.startButtonActive } ${hasFinished && styles.startButtonFinished}`}
                 disabled={hasFinished}

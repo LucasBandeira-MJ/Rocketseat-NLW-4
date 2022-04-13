@@ -1,5 +1,8 @@
-import { createContext, useState, ReactNode } from 'react'
+import { createContext, useState, ReactNode, useEffect } from 'react'
 import challenges from '../../challenges.json'
+
+import Cookies from 'js-cookie'
+import { LevelUpModal } from '../components/LevelUpModal'
 
 interface ChallengesContextData {
     level: number
@@ -14,6 +17,9 @@ interface ChallengesContextData {
 }
 
 interface ChallengesProviderProps {
+    level: number
+    currentExp: number
+    challengesCompleted: number
     children: ReactNode
 }
 
@@ -26,13 +32,24 @@ interface ActiveChallengeState {
 export const ChallengesContext = createContext({} as ChallengesContextData)
 
 
-export const ChallengesProvider = ({children}: ChallengesProviderProps) => {
-    const [level, setLevel] = useState(1)
-    const [currentExp, setCurrentExp] = useState(30)
-    const [challengesCompleted, setChallengesCompleted] = useState(0)
+export const ChallengesProvider = ({children, ...rest}: ChallengesProviderProps) => {
+    const [level, setLevel] = useState(rest.level ?? 1)
+    const [currentExp, setCurrentExp] = useState(rest.currentExp ?? 0)
+    const [challengesCompleted, setChallengesCompleted] = useState(rest.challengesCompleted ?? 0)
     const [activeChallenge, setActiveChallenge] = useState<null|ActiveChallengeState>(null)
 
     const experienceToNextLevel = Math.pow((level + 1) * 4 , 2)
+
+    useEffect(() => {
+        Notification.requestPermission()
+    }, [])
+
+    useEffect(() => {
+        Cookies.set('level', String(level))
+        Cookies.set('currentExp', String(currentExp))
+        Cookies.set('challengesCompleted', String(challengesCompleted))
+    }, [level, currentExp, challengesCompleted])
+    
 
     const levelUp = () => {
         setLevel(level => level + 1)
@@ -43,6 +60,14 @@ export const ChallengesProvider = ({children}: ChallengesProviderProps) => {
         const challenge = challenges[randomChallengeIndex]
 
         setActiveChallenge(challenge)
+
+        new Audio('/notification.mp3').play()
+
+        if(Notification.permission === 'granted') {
+            new Notification('Novo desafio 🎉', {
+                body: `Valendo ${challenge.amount} xp`
+            })
+        }
     }
 
     const resetChallenge = () => {
@@ -82,6 +107,8 @@ export const ChallengesProvider = ({children}: ChallengesProviderProps) => {
             }
         }>
             {children}
+
+            <LevelUpModal />
         </ChallengesContext.Provider>
     )
 }
